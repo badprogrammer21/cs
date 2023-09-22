@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+        <div class="profile_content">
+          <div class="profile_upper_content">
+              <div class="profile_avatar">
+                <img src="{{user.author.profile_pic.url}}" alt="Avatar">
+                
+              </div>
+              <div class="profile_info">
+                  <h2>{{user.author}}</h2>
+                  <p>{{user.author.bio}}</p>
+              </div>
+          </div>
+          <div class="profile-down-side">
+                  <div id="tabs-container">
+                      <div class="tabs-menu">
+                          <ul>
+                              <li class="current"><a href="#tab-3" tabindex="3">About</a></li>
+                              <li><a href="#tab-1" tabindex="1">Forum Posts</a></li>
+                              <li><a href="#tab-2" tabindex="2">Article Posts</a></li>
+                              {% if user == another_user %}
+                                <li><a href="#tab-4" tabindex="4">Settings</a></li>
+                              {%endif%}
+                            </ul>
+                      </div>
+                    <div class="tab">
+                      <div id="tab-1" class="tab-content">
+                        {% if users_forum_posts %}
+                          {% for post in users_forum_posts %}
+                          <div class="profile_post_forum">
+                              <a href="{% url 'details' post.slug %}">{{post.title}}</a>
+                              <p>{{post.content}}</p>
+                              <p>{{post.date}}</p>
+                          </div>
+                          {% endfor %}
+                        {% endif %} 
+                      </div>
+                      <div id="tab-2" class="tab-content">
+                          {% if users_article_posts %}
+                            {% for post in users_article_posts %}
+                              <div class="profile_post_forum">
+                                  <a href="{% url 'article_details' post.slug %}">{{post.title}}</a>
+                                  <p>{{post.content}}</p>
+                                  <p>{{post.date}}</p>
+                              </div>
+                            {% endfor %}
+                          {% endif %} 
+                      </div>
+                      <div id="tab-3" class="tab-content">
+                          <p>Account info</p>
+                              <ul>
+                                  <li>Id - {{user.author.id}}</li>
+                                  <li>Name - {{user.author}}</li>
+                                  <li>email - {{user.email}}</li>
+                                  <li>bio - {{user.author.bio}}</li>
+                              </ul>
+                      </div>
+                      <div id="tab-4" class="settings_profile tab-content">
+                          <form method="POST" autocomplete="off" action="{% url 'edit_profile' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                              <label for="username">Username</label>
+                              <input name="username" class="form-control" id="username" placeholder="{{user.author}}" >
+                              <label for="email">Email</label>
+                              <input name="email" class="form-control" id="email" placeholder="{{user.email}}">
+                              <label>Bio</label>
+                              <input name="bio" type="bio" class="form-control" id="newBio" placeholder="{{user.author.bio}}">
+                              <label>Current Password</label>
+                              <input name="current_password" type="password" class="form-control" id="inputPasswordCurrent">
+                              <small><a href="{% url 'recover_password' %}">Forgot your password?</a></small>
+                              <label for="inputPasswordNew">New password</label>
+                              <input name="inputPasswordNew" type="password" class="form-control" id="inputPasswordNew">
+                              <div class="form-group">
+                              <label for="inputPasswordNew2">Verify password</label>
+                              <input name="inputPasswordNew2" type="password" class="form-control" id="inputPasswordNew2">
+                              <label for="profilePicture">New profile picture</label>
+                              <input type="file" id="my-file" name="profile_pic">
+                              <br>
+
+                              <button type="submit">Save Changes</button>
+                          </form>
+                          <br>
+                          <input type="checkbox" onclick="myFunction()" class="show_password"><p>Show Password</p>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+        </div>
+
+<script>
+    var loadFile = function (event) {
+    var image = document.getElementById("output");
+    image.src = URL.createObjectURL(event.target.files[0]);
+  };
+</script>
+<script>
+  function myFunction() {
+  var x = document.getElementById("inputPasswordCurrent");
+  var x2 = document.getElementById("inputPasswordNew");
+  var x3 = document.getElementById("inputPasswordNew2");
+  if (x.type === "password" && x2.type === "password" && x3.type === "password") {
+    x.type = "text";
+    x2.type = "text";
+    x3.type = "text";
+  } else {
+    x.type = "password";
+    x2.type = "password";
+    x3.type = "password";
+  }
+}
+</script>
+    <script>
+$(document).ready(function(){
+
+  $('.tabs-menu a').click(function(event) {
+    event.preventDefault();
+    
+    // Toggle active class on tab buttons
+    $(this).parent().addClass("current");
+    $(this).parent().siblings().removeClass("current");
+    
+    // display only active tab content
+    var activeTab = $(this).attr("href");
+    $('.tab-content').not(activeTab).css("display","none");
+    $(activeTab).fadeIn();
+    
+  });
+  
+});
+      </script>
+
+{% endblock %}

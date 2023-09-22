@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load mytags %}
+{% block content %}
+
+        
+    <div class="main_content">
+
+        <!-- Image and Description -->
+        <div class="upper_content article_desc center">
+            {% if user == post.article_users.user %}
+                <a href="{% url 'update_post_article' slug=post.slug %}" class="edit_post">Edit</a>
+            {% endif %}
+            <h2>{{post.title}}</h2>
+            <p>{{content}}</p>
+        </div>
+    </div>
+<script src="https://unpkg.com/splitting/dist/splitting.js"></script>
+<script src="https://unpkg.com/scroll-out/dist/scroll-out.js"></script>
+    <script>
+        ScrollReveal().reveal('.headline');
+        Splitting();
+        ScrollOut({
+            targets: '[data-splitting]'
+        });
+    </script>
+{% endblock %}

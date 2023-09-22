@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="with=device-width, initial-scale=1.0">
+    <title>Forum</title>
+
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <!-- Default theme -->
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+
+    <link rel="stylesheet" href="{% static 'style.css' %}"></link>
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"></link>
+
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}"></link>
+
+    <link rel="stylesheet" href="{% static 'css/colors.css' %}"></link>
+
+    <link rel="stylesheet" href="{% static 'css/version/tech.css' %}"></link>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.2/TweenMax.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="https://codepen.io/mimikos/pen/GvpJYQ.js"></script>
+    <script src="https://codepen.io/mimikos/pen/rzOOgG.js"></script>
+	<script src="https://kit.fontawesome.com/e3c9ede64e.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="reply.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css" />
+    <link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting-cells.css" />
+    <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+</head>
+<body>
+    <div class="main">
+    {% include 'partials/_navbar.html' %}
+    {% block content %} {% endblock %}
+    {% include 'partials/_footer.html' %}
+    </div>
+    <script>
+        {% for msg in messages %}
+            {% if 'warning' in msg.tags %}
+                alertify.warning('{{msg}}');
+            {% elif 'error' in msg.tags %}
+                alertify.error('{{msg}}'); 
+            {% elif 'success' in msg.tags %}
+                alertify.success('{{msg}}'); 
+            {% endif %}
+        {% endfor %} 
+    </script>
+    <script>
+        Splitting();
+    </script>
+</body>
+
+</html>

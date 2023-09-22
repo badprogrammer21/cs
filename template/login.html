@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<body>
+    <div class="reg_form center">
+        <h2>Log in</h2>
+        <form action="{% url 'login' %}" method="POST">
+              {% csrf_token %}
+              <div class="input-box">
+                <input type="text" name="username" placeholder="Enter your username" required>
+              </div>
+              <div class="input-box">
+                <input type="password" name="pass" placeholder="Create password" required>
+              </div>
+              <div class="input-box button">
+                <input type="Submit" value="Log in Now">
+              </div>
+              <div class="text">
+                <h3>Forgot a password?<a href="{% url 'recover_password' %}">      Click</a></h3>
+              </div>
+        </form>
+    </div>
+</body>
+{% endblock %}

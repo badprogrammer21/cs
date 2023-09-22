@@ -1,0 +1,24 @@
+{% load static %}
+
+<div class="navbar">
+    <img class="logo" src="{% static 'images/empthy_logo.svg' %}" alt="logo">
+    <input type="checkbox" id="check">
+    <label for="check" class="checkbtn icons">
+        <i class="fa fa-bars" id="menu-icon"></i>
+        <i class="fa-solid fa-xmark" id="close-icon"></i>
+    </label>
+    <nav class="nav__links" id="menu-icon">
+        <ul>
+            <li><a class="link-navbar stagger-it" data-splitting href="{% url 'forum' %}">Forum</a></li>
+            <li><a class="link-navbar stagger-it" data-splitting href="{% url 'articles' %}">Articles</a></li>
+            <li><a class="link-navbar stagger-it" data-splitting href="{% url 'diary' %}">Diary</a></li>
+            {% if not user.is_authenticated %}
+                <li><a class="link-navbar stagger-it" data-splitting href="{% url 'register' %}">Register</a></li>
+                <li><a class="link-navbar stagger-it" data-splitting href="{% url 'login' %}">Login</a></li>
+            {% else %}
+                <li><a class="link-navbar stagger-it" data-splitting href="{% url 'profile' user.id %}" target="_blank">Profile</a></li>
+                <li><a class="link-navbar stagger-it" data-splitting href="{% url 'logout' %}">Logout</a></li>
+            {% endif %}
+        </ul>
+    </nav>  
+</div>

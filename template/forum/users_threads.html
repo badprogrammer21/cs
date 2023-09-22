@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<body>
+    <div class="main">
+            <div class="navbar">
+                <img class="logo" src="images/logo.svg" alt="logo">
+                <input type="checkbox" id="check">
+                <label for="check" class="checkbtn icons">
+                    <i class="fa fa-bars" id="menu-icon"></i>
+                    <i class="fa-solid fa-xmark" id="close-icon"></i>
+                </label>
+                <nav class="nav__links" id="menu-icon">
+                    <ul>
+                        <li><a class="link-navbar" href="{% url 'forum' %}">Forum</a></li>
+                        <li><a class="link-navbar" href="">Articles</a></li>
+                        <li><a class="link-navbar" href="#">Diary</a></li>
+                        {% if not user.is_authenticated %}
+                            <li><a href="{% url 'register' %}">Register</a></li>
+                            <li><a href="{% url 'login' %}">Login</a></li>
+                        {% else %}
+                            <li><a class="link-navbar" href="{% url 'profile' user.id %}" target="_blank">Profile</a></li>
+                            <li><a href="{% url 'logout' %}">Logout</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>  
+            </div>
+        
+        <div class="main_content">
+
+            <!-- Image and Description -->
+            <div class="upper_content">
+                <h2>Forum main page</h2>
+                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Animi eaque quod atque saepe quo cumque! Praesentium ducimus harum earum eum aperiam. Cupiditate beatae consequatur error porro eligendi fugiat praesentium distinctio quasi necessitatibus, cumque quibusdam labore voluptate vitae? Accusamus aliquid sapiente animi doloremque nulla aliquam sint deleniti iusto assumenda in, facere maiores excepturi neque? Corporis debitis nam, eos illo necessitatibus architecto doloremque iusto ipsum vero explicabo, culpa voluptate eum harum perspiciatis.</p>
+                <ul class="filter_buttons">
+                    <li><a href="">Newest</a></li>
+                    <li><a href="">Oldest</a></li>
+                    <li><a href="">Top</a></li>
+                    <li><a href="">Most viewed</a></li>
+                </ul>
+            </div>
+
+            <!-- Posts  -->
+            <div class="posts">
+                {% for post in posts %}
+                <div class="post">
+                    <div class="post_desc_down">
+                        <div class="post_desc_upper">
+                            <a class="shift-right" href="{% url 'details' post.slug %}" data-splitting>{{post.title|slice:":20"}}..</a>
+                        </div>
+                        <p class="post_content">{{post.content}}</p>
+                        <ul>
+                            <li>{{post.hit_count.hits}} views<i class="fa-regular fa-eye"></i></li>
+                            <li>{{post.comments.count}} comments<i class="fa-regular fa-comment"></i></li>
+                            <li>2 upvotes <i class="fa-regular fa-thumbs-up"></i></li>
+                        </ul>
+                        <p class="post_author_date">Posted by <a href="">{{post.user}} at </a>{{post.date}}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            <!-- Right section  -->
+            <div class="right_section">
+                <div class="categories">
+
+                    <p>Popular categories</p>
+                    <ul>
+                        {% for category in categories %}
+                            <li><a href="">{{category.title}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="active_threads">
+                    <p>Your active threads</p>
+                    <ul>
+                        {% if user.is_authenticated %}
+                                  {% if all_posts %}            
+                                      {% for post in all_posts %}
+                                          {% if post.user == user.author %}
+                                              <li>><a href="">{{post.title|slice:":40"}}<span class="badge pull-right">{{ct}}</span></a></li>
+                                          {% endif %}
+                                      {% endfor %}
+                                  {% endif %}
+                              {% else %} <li> <a href="">None</a></li>
+                            {% endif %}
+                            
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="pagination">
+            {% if posts.has_other_pages %}
+                {% if posts.has_previous %}
+                    <a href=""><i class="fa fa-angle-double-left"></i></a>
+                    <a href=""><i class="fa fa-angle-left"></i></a>
+                {% else %}
+                    <a onclick="return false" href=""><i class="fa fa-angle-double-left"></i></a>
+                    <a onclick="return false" href=""><i class="fa fa-angle-left"></i></a>
+                {% endif %}
+                {% for post in posts.paginator.page_range %}
+                    {% if listings.number == post %}
+			            <a href="" class="active">1</a>
+                    {% elif post > posts.number|add:'-3' and post < posts.number|add:'3' %}
+                        <a href="">{{post}}</a>
+                    {% endif %}
+                {% endfor %} 
+                {% if posts.has_next %}
+                    <a href=""><i class="fa fa-angle-right"></i></a>
+                    <a href=""><i class="fa fa-angle-double-right"></i></a>
+                {% else %}
+                    <a onclick="return false" href=""><i class="fa fa-angle-right"></i></a>
+                    <a onclick="return false" href=""><i class="fa fa-angle-double-right"></i></a>
+                {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
+    <script> Splitting(); </script>
+</body>
+
+{% endblock %}

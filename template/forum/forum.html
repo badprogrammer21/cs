@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load hitcount_tags %}    
+{% block content %}
+
+        
+        <div class="main_content">
+
+            <!-- Image and Description -->
+            <div class="upper_content">
+                <div class="real_upper_content">
+                    {% if categoryy %}
+                        <h2 class="stagger-it" data-splitting>Posts with category {{categoryy.title}}</h2>
+                    {% elif keywords %}
+                        <h2 class="stagger-it" data-splitting>Posts with keywords {{keywords}}</h2>
+                    {% elif tag %}
+                        <h2 class="stagger-it" data-splitting>Posts with tag {{tag}}</h2>
+                    {% elif sort %}
+                        <h2 class="stagger-it" data-splitting>Sorted by {{sort}}</h2>
+                    {% else %}
+                        <h2 class="stagger-it" data-splitting>Random Questions</h2>
+                    {% endif %}
+                    <div class="search_bar">
+                        <form method="GET" action="{% url 'search_forum_post' %}">
+                            {% csrf_token %}
+                                <i class="fa fa-search">
+                                <input type="text" placeholder="Search here..." id="keywords" name="keywords">
+                                <button type="submit" class="button">Search</button>
+                            </i>
+                        </form>
+                    </div>
+                    
+                    
+                </div>
+                <p>Chatting in forums you have to keep yourself respectful to others.
+                    Also you have time limit which you may manage. Forums are designed in
+                    this way in order to keep you concentrated on your goals.</p>
+                <ul class="tags">
+                    <li><a onclick="return false;" href="" style="pointer-events: none;">Tags:</a></li>
+                    {% for tag in pop_tags %}
+                        <li><a href="{% url 'posts_by_tag' tag=tag.0.slug %}">{{tag.0.name}}</a>,</li>
+                    {% endfor %}
+                </ul>
+                <ul class="filter_buttons">
+                        <li><a href="{% url 'create_post' %}">Create Post</a></li>
+                        <li><a href="{% url 'posts_sort' 'newest' %}" id="newest">Newest</a></li>
+                        <li><a href="{% url 'posts_sort'  'oldest' %}" id="oldest">Oldest</a></li>
+                        <li><a href="{% url 'posts_sort'  'top' %}" id="top">Top</a></li>
+                        <li><a href="{% url 'posts_sort'  'most_viewed' %}" id="most_viewed">Most viewed</a></li>
+                </ul>
+                <div class="clearing"></div>
+            </div>
+
+            <!-- Posts  -->
+            {% if posts %}
+            <div class="posts">
+                
+                    {% for post in posts %}
+                    <div class="post">
+                        <div class="post_desc_down">
+                            <div class="post_desc_upper">
+                                <img src="{% static 'images/avatar.jpg' %}" alt="Avatar" class="avatar">
+                                <a class="color-cycle" href="{% url 'details' post.slug %}" data-splitting>{{post.title}}</a>
+                            </div>
+                            <p class="post_author_date">Posted by <a href="{% url 'profile' post.user.id %}">{{post.user}}</a>  at {{post.date}}</p>
+                            {% if post.length < 599 %}
+                                <p class="post_content">{{post.content}}</p>
+                            {% else %}
+                            <p class="post_content">{{post.content|slice:599}}...</p>
+                            {% endif %}
+                            <ul>
+                                <li>{% get_hit_count for post %}<i class="fa-regular fa-eye"></i> views</li>
+                                <li>{{post.comments.count}}<i class="fa-regular fa-comment"></i> comments</li>
+                                <li>{{post.upvotes}}<i class="fa-regular fa-thumbs-up"></i> upvotes </li>
+                            </ul>
+                        </div>
+                    </div>
+                    {% endfor %}        
+        </div>
+        {% else %}
+        <div class="not_found_text">
+            <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
+            <p>No posts have been found</p>
+            <br>
+            <a href="" class="not_found_link">Create Post</a>
+        </div>
+        {% endif %}
+        <div class="pagination">
+            {% if posts.has_other_pages %}
+                {% if posts.has_previous %}
+                    <a href=""><i class="fa fa-angle-double-left"></i></a>
+                    <a href="?page={{ posts.previous_page_number }}"><i class="fa fa-angle-left"></i></a>
+                {% else %}
+                    <a onclick="return false" href=""><i class="fa fa-angle-double-left"></i></a>
+                    <a onclick="return false" href=""><i class="fa fa-angle-left"></i></a>
+                {% endif %}
+                {% for post in posts.paginator.page_range %}
+                    {% if listings.number == post %}
+			            <a href="" class="active">1</a>
+                    {% elif post > posts.number|add:'-3' and post < posts.number|add:'3' %}
+                        <a href="?page={{post}}">{{post}}</a>
+                    {% endif %}
+                {% endfor %} 
+                {% if posts.has_next %}
+                    <a href="?page={{ posts.next_page_number }}"><i class="fa fa-angle-right"></i></a>
+                    <a href=""><i class="fa fa-angle-double-right"></i></a>
+                {% else %}
+                    <a onclick="return false" href=""><i class="fa fa-angle-right"></i></a>
+                    <a onclick="return false" href=""><i class="fa fa-angle-double-right"></i></a>
+                {% endif %}
+
+            {% endif %}
+        </div>
+    </div>
+    <div class="down_section">
+        <div class="categories cts_container">
+
+            <p>Popular categories</p>
+            <ul>
+                {% for category in categories %}
+                    <li><a href="{% url 'category_posts' category.slug %}">{{category.title}}</a>
+                        <div class="cts_container_left">
+                            <p>{{category.num_posts}}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="active_threads cts_container">
+            <p>Your active threads</p>
+            <ul>
+                {% if user.is_authenticated %}
+                          {% if all_posts %}            
+                              {% for post in all_posts %}
+                                  {% if post.user == user.author %}
+                                      <li><a href="{% url 'details' post.slug %}">{{post.title|slice:":40"}}<span class="badge pull-right">{{ct}}</span></a>\
+                                        <div class="cts_container_left clearfix">
+                                            <p>{{post.upvotes}}</p>
+                                        </div>
+                                    </li>
+                                  {% endif %}
+                              {% endfor %}
+                            {% else %}
+                            <div class="not_found_text">
+                                <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
+                                <p>You have no active posts</p>
+                                <p>or you have not registered yet</p>
+                                <br>
+                                <a href="" class="not_found_link">Create Post</a>
+                            </div>
+                          {% endif %}
+                      {% else %}
+                      <div class="not_found_text">
+                        <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
+                        <p>You have no active posts</p>
+                        <p>or you have not registered yet</p>
+                        <br>
+                        <a href="" class="not_found_link">Create Post</a>
+                    </div>
+                    {% endif %}
+                    
+            </ul>
+        </div>
+
+    <script> Splitting(); </script>
+{% endblock %}

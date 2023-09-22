@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+{%block content%}
+<div class="main">
+    <div class="navbar">
+        <img class="logo" src="{% static 'images/empthy_logo.svg' %}" alt="logo">
+        <input type="checkbox" id="check">
+        <label for="check" class="checkbtn icons">
+            <i class="fa fa-bars" id="menu-icon"></i>
+            <i class="fa-solid fa-xmark" id="close-icon"></i>
+        </label>
+        <nav class="nav__links" id="menu-icon">
+            <ul>
+                <li><a class="link-navbar stagger-it" data-splitting href="{% url 'forum' %}">Forum</a></li>
+                        <li><a class="link-navbar stagger-it" data-splitting href="">Articles</a></li>
+                        <li><a class="link-navbar stagger-it" data-splitting href="#">Diary</a></li>
+                        {% if not user.is_authenticated %}
+                            <li><a class="link-navbar stagger-it" data-splitting href="{% url 'register' %}">Register</a></li>
+                            <li><a class="link-navbar stagger-it" data-splitting href="{% url 'login' %}">Login</a></li>
+                        {% else %}
+                            <li><a class="link-navbar stagger-it" data-splitting href="" target="_blank">Profile</a></li>
+                            <li><a class="link-navbar stagger-it" data-splitting href="{% url 'logout' %}">Logout</a></li>
+                        {% endif %}
+            </ul>
+        </nav>  
+    </div>
+    <div class="main_content">
+
+        <!-- Image and Description -->
+        <div class="upper_content">
+            <h2>{{post.title}}</h2>
+            {% if post.user == request.user %}
+                <p id="editable" contenteditable="true">{{post.content}}</p>
+            {% else%}
+                <p>{{post.content}}</p>
+            {%endif%}
+            <ul class="tags">
+                <li><a onclick="return false;" href="" style="pointer-events: none;">Tags:</a></li>
+                {% for tag in post.tags.all %}
+                    <li><a href="{% url 'posts_by_tag' '{{tag}}'%}">{{tag}}</a></li>
+                {% endfor %}
+            </ul>
+            <ul class="filter_buttons">
+                <button type="button" id="editButton">Edit</button>
+                <li><a href="{% url  'comments_sort' slug=post.slug typesort='newest' %}" id="newest">Newest</a></li>
+                <li><a href="{% url  'comments_sort' slug=post.slug typesort='oldest' %}" id="oldest">Oldest</a></li>
+                <li><a href="{% url  'comments_sort' slug=post.slug typesort='top' %}" id="top">Top</a></li>
+            </ul>
+            <div class="clearing"></div>
+        </div>
+
+<div class="comment-thread">
+    <!-- Comment 1 start -->
+    {%if comments.all %}
+    {%for comment in comments.all%}
+    <details open class="comment" id="comment-{{comment.id}}">
+        <a href="#comment-{{comment.id}}" class="comment-border-link">
+            <span class="sr-only">Jump to comment-1</span>
+        </a>
+        <summary>
+            <div class="comment-heading">
+                <div class="another_color comment-voting">
+                        <button id="like-comment" data-id="{{comment.id}}" value="{{ comment.id }}" >
+                            <span aria-hidden="true">&#9650;</span>
+                            <span class="sr-only" >Vote up</span>
+                        </button>
+                        <button id="dislike-comment" data-id="{{comment.id}}" value="{{ comment.id }}">
+                            <span aria-hidden="true">&#9660;</span>
+                            <span class="sr-only">Vote down</span>
+                        </button>
+
+                </div>
+                <div class="comment-info">
+                    <img src="{% static 'images/avatar.jpg' %}" alt="Avatar" class="avatar">
+                    <a href="#" class="comment-author">{{comment.user.slug}}</a>
+                        <p class="m-0"
+                           id="comment-like-counts-{{comment.id}}">
+                            {{comment.upvotes}} points &bull; {{comment.date}}
+                        </p>
+                </div>
+            </div>
+        </summary>
+
+        <div class="comment-body">
+            <p>{{comment.content}}</p>
+            <button type="button" data-toggle="reply-form" data-target="comment-{{comment.id}}-reply-form">Reply</button>
+            <button type="button">Flag</button>
+            {%if comment.user.id == request.user.id and comment.is_deleted == False %}
+            <form action="{% url 'delete' post.slug comment.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+            {%endif%}
+            <!-- Reply form start -->
+            <form method="POST" class="reply-form d-none" id="comment-{{comment.id}}-reply-form">
+                {% csrf_token %}
+                <textarea placeholder="Reply to comment" rows="4" name="reply"></textarea>
+                <input type="hidden" name="parent_comment_id" value="{{ comment.id }}">
+                <button type="submit">Submit</button>
+                <button type="button" data-toggle="reply-form" data-target="comment-{{comment.id}}-reply-form">Cancel</button>
+            </form>
+            <!-- Reply form end -->
+        </div>
+
+        <div class="replies" >
+
+            <div id="p_replies-{{comment.id}}"  style="display: none;">
+                 {%for reply in comment.replies.all%}
+                <details open class="comment" id="comment-{{reply.id}}" >
+                <a href="#comment-{{reply.id}}" class="comment-border-link">
+                    <span class="sr-only">Jump to comment-2</span>
+                </a>
+                <summary>
+                    <div class="comment-heading">
+                        <div class="another_color comment-voting">
+                                <button id="like-reply" data-id="{{reply.id}}" value="{{ reply.id }}">
+                                    <span aria-hidden="true">&#9650;</span>
+                                    <span class="sr-only" >Vote up</span>
+                                </button>
+                                <button id="dislike-reply" data-id="{{reply.id}}" value="{{ reply.id }}">
+                                    <span aria-hidden="true">&#9660;</span>
+                                    <span class="sr-only">Vote down</span>
+                                </button>
+                        </div>
+                        <div class="comment-info">
+                            <img src="{% static 'images/avatar.jpg' %}" alt="Avatar" class="avatar">
+                            <a href="#" class="comment-author">{{reply.user.slug}}</a>
+                            <p class="m-0"  id="reply-like-counts-{{reply.id}}">
+                                {{reply.upvotes}} points &bull; {{reply.date}}
+                            </p>
+                        </div>
+                    </div>
+                </summary>
+
+                <div class="comment-body">
+                    <p>
+                        @{{reply.replied_to}}, {{reply.content}}
+                    </p>
+                    <button type="button" data-toggle="reply-form" data-target="comment-{{reply.id}}-reply-form">Reply</button>
+                    <button type="button">Flag</button>
+                    {% if reply.user.id == user.id and reply.is_deleted == False %}
+                        <form action="{% url 'delete_reply' post.slug reply.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+
+                    <!-- Reply form start -->
+                    <form method="POST" class="reply-form d-none" id="comment-{{reply.id}}-reply-form">
+                        {% csrf_token %}
+                        <textarea placeholder="Reply to comment" rows="4" name="reply"></textarea>
+                        <input type="hidden" name="parent_comment_id" value="{{ comment.id }} {{ reply.id }}">
+                        <button type="submit">Submit</button>
+                        <button type="button" data-toggle="reply-form" data-target="comment-{{reply.id}}-reply-form">Cancel</button>
+                    </form>
+                    <!-- Reply form end -->
+                </div>
+            </details>
+                {%endfor%}
+            </div>
+
+            <!-- Comment 2 end -->
+
+
+                {% if comment.amount_of_replies > 0 %}
+                <button onclick="document.getElementById('p_replies-{{comment.id}}').style.display= 'block';
+                            document.getElementById('load_replies-{{comment.id}}').style.display='none';
+                            document.getElementById('hide_replies-{{comment.id}}').style.display='block';
+                            "
+               id="load_replies-{{comment.id}}">Load More Replies</button>
+                <button type="button" style="display: none;"
+                        onclick="document.getElementById('p_replies-{{comment.id}}').style.display= 'none';
+                        document.getElementById('load_replies-{{comment.id}}').style.display='block';
+                        document.getElementById('hide_replies-{{comment.id}}').style.display='none';"
+                        id="hide_replies-{{comment.id}}">Hide Replies</button>
+                {% endif %}
+        </div>
+    </details>
+    <!-- Comment 1 end -->
+    {%endfor%}
+</div>
+<form method="POST">
+    {% csrf_token %}
+    <textarea name="comment_content" class="comment_input" placeholder="Write a comment"></textarea>
+    <button class='primaryContained float-right' type="submit">Add Comment</button>
+</form>
+{% else  %}
+</div>
+</div>
+<div class="not_found_text">
+    <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
+    <p>No comments yet</p>
+    <p>Be the first!</p>
+            <form method="POST">
+                {% csrf_token %}
+                <textarea name="comment_content" class="comment_input" placeholder="Write a comment"></textarea>
+                <button class='primaryContained float-right' type="submit">Add Comment</button>
+            </form>
+  {%endif%}
+</div>
+<script> Splitting(); </script>
+<script type="text/javascript">
+    $(document).on('click', '#like-comment', function(e){
+        e.preventDefault();
+        var idd = $(this).data("id");
+        var com_like_counts = 'comment-like-counts-' + idd;
+        $.ajax({
+            type:'POST',
+            url:'{% url "comment_like" %}',
+            data: {
+                comment_id: idd,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                action: 'post',
+                should_be: com_like_counts
+            },
+            success: function (json) {
+                document.getElementById(com_like_counts).innerHTML = json['result']
+                console.log(json)
+            },
+        });
+    })
+
+</script>
+<script type="text/javascript">
+    $(document).on('click', '#dislike-comment', function(e){
+        e.preventDefault();
+        var idd = $(this).data("id");
+        var com_like_counts = 'comment-like-counts-' + idd;
+        $.ajax({
+            type:'POST',
+            url:'{% url "dislike_comment" %}',
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                action: 'post',
+                cm_id: idd
+            },
+            success: function (json) {
+                document.getElementById(com_like_counts).innerHTML = json['result']
+                console.log(json)
+            },
+        });
+    })
+</script>
+
+<script type="text/javascript">
+    $(document).on('click', '#like-reply', function(e){
+        e.preventDefault();
+        var idd = $(this).data("id");
+        var rep_like_counts = 'reply-like-counts-' + idd;
+        $.ajax({
+            type:'POST',
+            url:'{% url "reply_like" %}',
+            data: {
+                reply_id: idd,
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                action: 'post'
+            },
+            success: function (json) {
+                document.getElementById(rep_like_counts).innerHTML = json['result']
+                console.log(json)
+            },
+        });
+    })
+
+</script>
+<script type="text/javascript">
+    $(document).on('click', '#dislike-reply', function(e){
+        e.preventDefault();
+        var idd = $(this).data("id");
+        var rep_like_counts = 'reply-like-counts-' + idd;
+        $.ajax({
+            type:'POST',
+            url:'{% url "dislike_reply" %}',
+            data: {
+                csrfmiddlewaretoken: $("input[name=csrfmiddlewaretoken]").val(),
+                action: 'post',
+                cm_id: idd
+            },
+            success: function (json) {
+                document.getElementById(rep_like_counts).innerHTML = json['result']
+                console.log(json)
+            },
+        });
+    })
+</script>
+
+
+
+<script type="text/javascript">window.mytest = function() { var isValid = confirm('Are you sure ?');if (!isValid) { event.preventDefault();  alert("It wont delete. Yay!");}}</script>
+<script>
+    document.addEventListener(
+    "click",
+    function(event) {
+        var target = event.target;
+        var replyForm;
+        if (target.matches("[data-toggle='reply-form']")) {
+            replyForm = document.getElementById(target.getAttribute("data-target"));
+            replyForm.classList.toggle("d-none");
+        }
+    },
+    false
+);
+</script>
+
+<script>
+    $('#save').hide();
+
+    $('#editButton').click(function(){
+    $('#editable').focus();
+    $('#editButton').hide();
+    $('#save').show();
+    });
+
+
+    $('#save').click(function(){
+    $('#editButton').show();
+    $('#save').hide();
+    });
+</script>
+{%endblock%}
