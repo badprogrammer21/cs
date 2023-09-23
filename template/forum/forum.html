@@ -59,7 +59,7 @@
                     <div class="post">
                         <div class="post_desc_down">
                             <div class="post_desc_upper">
-                                <img src="{% static 'images/avatar.jpg' %}" alt="Avatar" class="avatar">
+                                <img src="{{post.user.profile_pic.url}}" alt="Avatar" class="avatar">
                                 <a class="color-cycle" href="{% url 'details' post.slug %}" data-splitting>{{post.title}}</a>
                             </div>
                             <p class="post_author_date">Posted by <a href="{% url 'profile' post.user.user.id %}">{{post.user}}</a>  at {{post.date}}</p>
