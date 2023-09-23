@@ -97,8 +97,6 @@ def articles(request):
 def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
-        context = {'form': form}
-        print(form)
         if form.is_valid():
             print('VALID')
             user = form.save()
@@ -210,7 +208,7 @@ def profile(request, id_user):
         'user': pf_user,
         'lst': [
             len(Post.objects.filter(user=pf_user.author)),
-            #len(ArticlePost.objects.filter(article_users=pf_user.author))
+            len(ArticlePost.objects.filter(article_users=pf_user.author))
         ]
     })
 
@@ -233,6 +231,10 @@ def edit_profile(request):
             if user.check_password(request.POST['current_password']):
                 if ps1 == ps2:
                     new_profile = profileform.save(commit=False)
+                    print(request.POST['username'])
+                    if request.POST['username'] == '':
+                        messages.error(request, 'Username cannot be empty')
+                        return redirect(forum)
                     if profileform.instance.bio == '':
                         new_profile.bio = author2.bio
                     if userform.instance.email == '':
@@ -246,7 +248,6 @@ def edit_profile(request):
                         new_profile.hidden = True
                     if "completely_hidden" not in choice:
                         new_profile.hidden = False
-                    print(new_profile)
                     new_profile.save()
                     userform.save()
                     if len(ps1) > 6:
