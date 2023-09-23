@@ -616,6 +616,58 @@ form .input-box input{
     100% { color: #05158d }
   }
 
+/* SECTIONS  */
+
+.sections{
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    padding-top: 100px;
+    scroll-behavior: smooth;
+}
+.course-col {
+    margin-right: 1.5%;
+}
+.th1{
+    font-size: 36px;
+    font-weight: 600;
+}
+.textp{
+    color: #777;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 22px;
+    padding: 10px;
+}
+.row-sections{
+    margin-top: 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    vertical-align: top;
+}
+.course-col{
+    display: block;
+    flex-basis: 31%;
+    background-color: #11111A !important;
+    border-radius: 10px;
+    margin-bottom: 5%;
+    padding: 20px 12px;
+    box-sizing: border-box;
+    transition: 0.5s;
+}
+.container-sections h3{
+    color: white;
+    text-align: center;
+    font-weight: 600;
+    margin: 10px 0;
+}
+.sections h1 {
+    color: white;
+}
+.course-col:hover{
+    box-shadow: 0 0 20px 0px rgba(0,0,0,0.2);
+}
 
 /*  DIARY TO DO LIST  */
   
@@ -1216,10 +1268,26 @@ details.comment:not([open]) .comment-heading::after {
     display: none;
 }
 
+
 @media (max-device-width: 475px) {
     .main {
         max-width: 95%;
     }
+    
+
+    .th1{
+        font-size: 24px;
+        font-weight: 300;
+    }
+    .course-col{
+        flex-basis: 40%;
+    }
+    .row-sections{
+        margin-top: 5%;
+        display: block;
+
+    }
+
     .timeline{
         margin: 50px auto;
     }
@@ -1634,6 +1702,14 @@ details.comment:not([open]) .comment-heading::after {
     li a,
     li{
         font-size: 10px !important;
+    }
+    .th1{
+        font-size: 28px;
+        font-weight: 600;
+    }
+    .course-col{
+        display: block;
+        flex-basis: 38%;
     }
     .upper_content {
         display: block;
