@@ -22,6 +22,7 @@ from collections import defaultdict
 from django.core.mail import BadHeaderError, send_mail
 import re
 from django.contrib.auth.models import User
+import math
 
 
 
@@ -42,6 +43,7 @@ def forum(request):
             dct[tag]+=1
     pop_tags = sorted(dct.items(),key = lambda ele : dct[ele[1]], reverse=True)[:5]
     context = {
+        'max_posts': math.ceil(len(Post.objects.all()) / 6),
         "pop_tags": pop_tags,
         "categories": category,
         "posts": paged_posts,
@@ -87,6 +89,7 @@ def articles(request):
     all_posts = ArticlePost.objects.filter(approved=True)
     fx=[len(ArticlePost.objects.filter(categories=cat)) for cat in category]
     context = {
+        'max_posts': math.ceil(len(ArticlePost.objects.all()) / 6),
         "categories": category,
         "posts": paged_posts,
         "all_posts": all_posts,

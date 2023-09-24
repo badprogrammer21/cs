@@ -56,7 +56,11 @@
                                                     <div class="col-md-4">
                                                         <div class="post-media">
                                                             <a href="{% url 'article_details' post.slug %}" title="">
-                                                                <img src="{% static 'images/avatar.jpg' %}" alt="" class="img-fluid">
+                                                                {% if post.article_image %}
+                                                                    <img src="{{post.article_image.url}}" alt="" class="img-fluid">
+                                                                {% else %}
+                                                                    <img src="{% static 'images/avatar.jpg' %}" alt="" class="img-fluid">
+                                                                {% endif %}
                                                                 <div class="hovereffect"></div>
                                                             </a>
                                                         </div><!-- end media -->
@@ -122,56 +126,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="down_section">
-        <div class="categories cts_container">
-
-            <p>Popular categories</p>
-            <ul>
-                {% for category in categories %}
-                    <li><a href="{% url 'category_articles' category.slug %}">{{category.title}}</a>
-                        <div class="cts_container_left">
-                            <p>{{category.num_posts}}</p>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="active_threads cts_container">
-            <p>Your active threads</p>
-            <ul>
-                {% if user.is_authenticated %}
-                          {% if all_posts %}            
-                              {% for post in all_posts %}
-                                  {% if post.user == user.author %}
-                                      <li><a href="{% url 'details' post.slug %}">{{post.title|slice:":40"}}<span class="badge pull-right">{{ct}}</span></a>\
-                                        <div class="cts_container_left clearfix">
-                                            <p>{{post.upvotes}}</p>
-                                        </div>
-                                    </li>
-                                  {% endif %}
-                              {% endfor %}
-                            {% else %}
-                            <div class="not_found_text">
-                                <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
-                                <p>You have no active posts</p>
-                                <p>or you have not registered yet</p>
-                                <br>
-                                <a href="" class="not_found_link">Create Post</a>
-                            </div>
-                          {% endif %}
-                      {% else %}
-                      <div class="not_found_text">
-                        <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
-                        <p>You have no active posts</p>
-                        <p>or you have not registered yet</p>
-                        <br>
-                        <a href="" class="not_found_link">Create Post</a>
-                    </div>
-                    {% endif %}
-                    
-            </ul>
-        </div>
-    </div>
+    
     <script> Splitting(); </script>
 </body>
 

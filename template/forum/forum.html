@@ -59,7 +59,12 @@
                     <div class="post">
                         <div class="post_desc_down">
                             <div class="post_desc_upper">
-                                <img src="{{post.user.profile_pic.url}}" alt="Avatar" class="avatar">
+                                {% if post.user.profile_pic %}
+
+                                    <img src="{{post.user.profile_pic.url}}" alt="Avatar" class="avatar">
+                                {% else %}
+                                 <img src="{% static 'images/avatar.jpg' %}" alt="Avatar" class="avatar">
+                                {% endif %}
                                 <a class="color-cycle" href="{% url 'details' post.slug %}" data-splitting>{{post.title}}</a>
                             </div>
                             <p class="post_author_date">Posted by <a href="{% url 'profile' post.user.user.id %}">{{post.user}}</a>  at {{post.date}}</p>
@@ -85,10 +90,11 @@
             <a href="" class="not_found_link">Create Post</a>
         </div>
         {% endif %}
+        {{max_posts}}
         <div class="pagination">
             {% if posts.has_other_pages %}
                 {% if posts.has_previous %}
-                    <a href=""><i class="fa fa-angle-double-left"></i></a>
+                    <a href="?page=1"><i class="fa fa-angle-double-left"></i></a>
                     <a href="?page={{ posts.previous_page_number }}"><i class="fa fa-angle-left"></i></a>
                 {% else %}
                     <a onclick="return false" href=""><i class="fa fa-angle-double-left"></i></a>
@@ -103,7 +109,8 @@
                 {% endfor %} 
                 {% if posts.has_next %}
                     <a href="?page={{ posts.next_page_number }}"><i class="fa fa-angle-right"></i></a>
-                    <a href=""><i class="fa fa-angle-double-right"></i></a>
+                    
+                    <a href="?page={{max_posts}}"><i class="fa fa-angle-double-right"></i></a>
                 {% else %}
                     <a onclick="return false" href=""><i class="fa fa-angle-right"></i></a>
                     <a onclick="return false" href=""><i class="fa fa-angle-double-right"></i></a>
@@ -112,55 +119,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="down_section">
-        <div class="categories cts_container">
 
-            <p>Popular categories</p>
-            <ul>
-                {% for category in categories %}
-                    <li><a href="{% url 'category_posts' category.slug %}">{{category.title}}</a>
-                        <div class="cts_container_left">
-                            <p>{{category.num_posts}}</p>
-                        </div>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="active_threads cts_container">
-            <p>Your active threads</p>
-            <ul>
-                {% if user.is_authenticated %}
-                          {% if all_posts %}            
-                              {% for post in all_posts %}
-                                  {% if post.user == user.author %}
-                                      <li><a href="{% url 'details' post.slug %}">{{post.title|slice:":40"}}<span class="badge pull-right">{{ct}}</span></a>\
-                                        <div class="cts_container_left clearfix">
-                                            <p>{{post.upvotes}}</p>
-                                        </div>
-                                    </li>
-                                  {% endif %}
-                              {% endfor %}
-                            {% else %}
-                            <div class="not_found_text">
-                                <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
-                                <p>You have no active posts</p>
-                                <p>or you have not registered yet</p>
-                                <br>
-                                <a href="" class="not_found_link">Create Post</a>
-                            </div>
-                          {% endif %}
-                      {% else %}
-                      <div class="not_found_text">
-                        <img class="not_found" src="{% static 'images/undraw_walking_in_rain_o2e3.svg' %}" alt="logo">
-                        <p>You have no active posts</p>
-                        <p>or you have not registered yet</p>
-                        <br>
-                        <a href="" class="not_found_link">Create Post</a>
-                    </div>
-                    {% endif %}
-                    
-            </ul>
-        </div>
 
     <script> Splitting(); </script>
 {% endblock %}

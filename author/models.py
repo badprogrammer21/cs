@@ -14,7 +14,7 @@ resume_after = timedelta(seconds=30)
 class Author(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=0)
-    profile_pic = ResizedImageField(size=[50,80], quality=100, upload_to='profile_pictures/', default='def.jpg', null=True, blank=True)
+    profile_pic = ResizedImageField(size=[50,80], quality=100, upload_to='profile_pictures/', null=True, blank=True)
     bio = models.CharField(max_length=200)
     slug = slug = models.SlugField(max_length=400, unique=True,blank=True)
     hidden = models.BooleanField(default=False)

@@ -12,12 +12,16 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core import serializers
 from django.http import JsonResponse
 from django.contrib import messages
+import math
+from datetime import timedelta
+from django.utils import timezone 
 
 def posts_by_tag(request, tag):
     category = Category.objects.order_by('title')
     category2 = Category.objects.order_by('title')
     posts = Post.objects.filter(approved=True, tags__name=tag)
     return render(request, 'forum/forum.html', {
+        'max_posts': math.ceil(len(Post.objects.all()) / 6),
         'tag': tag,
         "all_posts": Post.objects.all()[:6],
         "user": request.user,
@@ -29,12 +33,17 @@ def posts_by_tag(request, tag):
         ),
     })
 
+def categories_list(request):
+    return render(request, 'categories_list.html', {
+        'categories': Category.objects.all()
+    })
 
 def category_posts(request, slug):
     category = Category.objects.order_by('title')
     category2 = get_object_or_404(Category, slug=slug)
     posts = Post.objects.filter(approved=True, categories=category2)
     context = {
+        'max_posts': math.ceil(len(Post.objects.all()) / 6),
         "all_posts": Post.objects.all()[:6],
         "categoryy": category2,
         "categories": category[:6],
@@ -65,10 +74,13 @@ def detail(request, slug):
     category2 = Category.objects.order_by('title')
     posts = Post.objects.filter(approved=True)
     user = request.user
-
     if "comment_content" in request.POST:
-        print("comment")
         comment = request.POST.get("comment_content")
+        commment_auth = Comment.objects.filter(user=request.user.author)
+        last_comm = (timezone.now() - commment_auth.latest('date').date).seconds // 60 % 60
+        if last_comm < 5:
+            messages.error(request, 'You cannot comment more than 1 time in 5 minutes. So take this time to scrutinize the question')
+            return redirect(detail, slug)
         new_comment, created = Comment.objects.get_or_create(user=user.author, content=comment, sp_post=post)
 
         post.comments.add(new_comment.id)
@@ -77,6 +89,12 @@ def detail(request, slug):
         reply = request.POST.get("reply")
         st = request.POST['parent_comment_id']
         parent_comment = Comment.objects.get(id=st[:st.index(' ')]) if ' ' in st else Comment.objects.get(id=st)
+        reply_auth = Reply.objects.filter(user=request.user.author)
+        last_comm = (timezone.now() - reply_auth.latest('date').date).seconds // 60 % 60
+        if last_comm < 5:
+            messages.error(request, 'You cannot reply more than 1 time in 5 minutes. So take this time to scrutinize the question')
+            return redirect(detail, slug)
+        
         new_reply, created = '', ''
         if ' ' in st:
             reply_st=Reply.objects.get(id=st[st.index(' ')+1:])
@@ -155,6 +173,7 @@ def posts_sort(request, typesort):
         queryset_list = Post.objects.order_by('upvotes')
 
     return render(request, 'forum/forum.html', {
+        'max_posts': math.ceil(len(Post.objects.all()) / 6),
         'sort': typesort,
         'user': request.user,
         'posts': queryset_list,
@@ -176,6 +195,7 @@ def search_forum_post(request):
             queryset_list = queryset_list.filter(content__icontains=keywords)
 
     return render(request, 'forum/forum.html', {
+        'max_posts': math.ceil(len(Post.objects.all()) / 6),
         'keywords': keywords,
         'user': request.user,
         'posts': queryset_list,
@@ -204,9 +224,7 @@ def comment_like(request):
 
 def reply_like(request):
     reply = ''
-    print("aa")
     if request.POST.get('action') == 'post':
-        print("aaaaaaa")
         reply = Reply.objects.get(id=request.POST.get('reply_id'))
         if request.user.author in reply.disliked_by.all():
             reply.disliked_by.remove(request.user.author)
@@ -272,6 +290,11 @@ class PostCreateView(CreateView):
 
 
     def form_valid(self, form):
+        auth_posts = Post.objects.filter(user=self.request.user.author)
+        last_comm = (timezone.now() - auth_posts.latest('date').date).seconds // 60 % 60
+        if last_comm < 5:
+            messages.error(self.request, 'You cannot create a post more than 1 time in 5 minutes. So take this time to scrutinize the question')
+            return super(PostCreateView, self).form_invalid(form)
         candidate = form.save(commit=False)
         candidate.user = Author.objects.get(user=self.request.user)
         candidate.save()

@@ -15,6 +15,8 @@ urlpatterns = [
     path("category/<slug>/", category_posts, name="category_posts"),
     path("sort_by/<str:typesort>", posts_sort, name="posts_sort"),
     path("tag/<tag>", posts_by_tag, name="posts_by_tag"),
+    
+    path('categories_list/', categories_list, name="categories_list"),
 
     path("comment_like", comment_like, name="comment_like"),
     path("dislike_comment", comment_dislike, name="dislike_comment"),

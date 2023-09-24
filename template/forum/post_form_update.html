@@ -26,14 +26,14 @@
 
                         <!-- POST -->
                         <div class="form-group">
-                            <form method="POST" action="{% url 'update_post_forum' slug=post.slug%}">
+                            <form method="POST" action="{% url 'update_post_forum' slug=post.slug %}">
                                 {% csrf_token %}
                                 <div class="centered_create_post">
                                     {% render_field form.title placeholder="Enter title" class+="form-control each_post_create" %}
                                     {% render_field form.content  placeholder="Enter content" class+="form-control each_post_create pst_create_categories " %}
                                     {% render_field form.categories  class+="form-control each_post_create pst_create_categories " %}
                                     {% render_field form.tags placeholder="Enter tags" class+="form-control each_post_create" %}
-                                        <div class="pull-left"><button type="submit" class="btn_create_post">Update Post</button></div>
+                                        <div class="pull-left"><button type="submit" class="btn_create_post">Update Post {{post.slug}}</button></div>
                                 </div>
                                         <div class="clearfix"></div>
                                     </div>

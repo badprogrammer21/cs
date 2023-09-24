@@ -4,43 +4,47 @@
 {% load crispy_forms_tags %}
 {% load widget_tweaks %} 
 {% block content %}
-<body>
 
     <div class="container-fluid">
         <section class="content">
-            <!--
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 breadcrumbf">
-                        <a href="#">Borderlands 2</a> <span class="diviver">&gt;</span> <a href="#">General Discussion</a> <span class="diviver">&gt;</span> <a href="#">New Topic</a>
-                    </div>
-                </div>
-            </div> -->
-
-
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 col-md-8">
 
-
-
-                        <!-- POST -->
                         <div class="form-group">
-                            <form method="POST" action="{% url 'update_post' slug=post.slug%}">
+                            <form method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="centered_create_post">
-                                    {% render_field form.title placeholder="Enter title" class+="form-control each_post_create" %}
-                                    {% render_field form.content  placeholder="Enter content" class+="form-control each_post_create pst_create_categories " %}
-                                    {% render_field form.categories  class+="form-control each_post_create pst_create_categories " %}
+                                    <div class="form-group">
+                                        <label for="{{ form.title.id_for_label }}"></label>
+                                        {{ form.title }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.content.id_for_label }}"></label>
+                                        {{ form.content }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.categories.id_for_label }}"></label>
+                                        {{ form.categories }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.article_tags.id_for_label }}"></label>
+                                        {{ form.article_tags }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.article_image.id_for_label }}"></label>
+                                        {{ form.article_image }}
+                                    </div>
                                         <div class="pull-left"><button type="submit" class="btn_create_post">Update Post</button></div>
                                 </div>
                                         <div class="clearfix"></div>
-                                    </div>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </form>
                         </div>
-                        
+                                    <div class="clearfix"></div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+            </section>           
         {% include 'partials/_footer.html' %}
     </div>
 
@@ -73,7 +77,5 @@
         });	//ready
 
     </script>
-
     <!-- END REVOLUTION SLIDER -->
-</body>
 {%endblock%}

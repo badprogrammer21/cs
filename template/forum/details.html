@@ -84,7 +84,7 @@
 
                     <div class="replies" >
 
-                        <div id="p_replies-{{comment.id}}"  style="display: none;">
+                        <div id="p_replies-{{comment.id}}" >
                             {%for reply in comment.replies.all%}
                             <details open class="comment" id="comment-{{reply.id}}" >
                             <a href="#comment-{{reply.id}}" class="comment-border-link">
@@ -113,7 +113,7 @@
                                 </div>
                             </summary>
                             <div class="comment-body">
-                                <p>{{reply.content}}</p>
+                                <p><a href="{% url 'profile' reply.replied_to.user.id %}">@{{reply.replied_to}}</a>, {{reply.content}}</p>
                                 <button type="button" data-toggle="reply-form" data-target="comment-{{reply.id}}-reply-form">Reply</button>
                                 {% if reply.user.id == user.author.id and reply.is_deleted == False %}
                                     <form action="{% url 'delete_reply' post.slug reply.id %}" method="post" style="display: inline;">
@@ -141,19 +141,6 @@
         
             <!-- Comment 2 end -->
 
-
-                {% if comment.amount_of_replies > 0 %}
-                <a style="margin-left: 25px; cursor: pointer;" onclick="document.getElementById('p_replies-{{comment.id}}').style.display= 'block';
-                            document.getElementById('load_replies-{{comment.id}}').style.display='none';
-                            document.getElementById('hide_replies-{{comment.id}}').style.display='block';
-                            "
-               id="load_replies-{{comment.id}}">Load More Replies</a>
-                <a  type="button" style="display: none; margin-left: 25px; cursor: pointer;"
-                        onclick="document.getElementById('p_replies-{{comment.id}}').style.display= 'none';
-                        document.getElementById('load_replies-{{comment.id}}').style.display='block';
-                        document.getElementById('hide_replies-{{comment.id}}').style.display='none';"
-                        id="hide_replies-{{comment.id}}">Hide Replies</a>
-                {% endif %}
             </details>
     
     <!-- Comment 1 end -->

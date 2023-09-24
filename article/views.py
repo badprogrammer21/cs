@@ -12,8 +12,12 @@ from django.core import serializers
 from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 from django.contrib import messages
+from django import forms
 
-
+def categories_list(request):
+    return render(request, 'categories_list.html', {
+        'categories': ArticleCategory.objects.all()
+    })
 
 def category_articles(request, slug):
     category = ArticleCategory.objects.order_by('title')
@@ -119,9 +123,8 @@ def search_article_post(request):
 
 class ArticlePostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ArticlePost
-    fields = ['title', 'content']
-    template_name = 'articles/post_form_update.html'
-
+    template_name = 'articles/article_form_update.html'
+    form_class = ArticlePostForm
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -130,7 +133,8 @@ class ArticlePostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 
     def test_func(self):
         post = self.get_object()
-        if self.request.user.id == post.user.id:
+        print(post)
+        if self.request.user.id == post.article_users.user.id:
             return True
         return False
 

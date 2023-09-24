@@ -196,6 +196,7 @@ a {
 .articles,
 .emp-profile,
 .profile_content,
+.categories_list,
 .down_section div {
     background-color: #11111A !important;
 }
@@ -669,6 +670,53 @@ form .input-box input{
     box-shadow: 0 0 20px 0px rgba(0,0,0,0.2);
 }
 
+
+    /* List */
+.categories_list ul {
+    margin-top: 20px;
+    counter-reset: index;  
+    padding: 0;
+    max-width: 100%;
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+  }
+  
+  
+  /* List element */
+.categories_list li {
+    counter-increment: index; 
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    padding: 12px 0;
+    box-sizing: border-box;
+    color:	#DCDCDC;
+  }
+  
+  
+  /* Element counter */
+.categories_list li::before {
+    content: counters(index, ".", decimal-leading-zero);
+    font-size: 1.5rem;
+    text-align: right;
+    font-weight: bold;
+    min-width: 50px;
+    padding-right: 12px;
+    font-variant-numeric: tabular-nums;
+    align-self: flex-start;
+    background-image: linear-gradient(to bottom, aquamarine, orangered);
+    background-attachment: fixed;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  
+  /* Element separation */
+.categories_list li + li {
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+
 /*  DIARY TO DO LIST  */
   
 .diary_detail p{
@@ -679,7 +727,7 @@ form .input-box input{
     color: white;
     position: relative;
     word-wrap: break-word;
-    font-size: 20px !important;
+    font-size: 15px !important;
     max-width: 100%;
     margin: auto;
     left: 0;
@@ -689,7 +737,7 @@ form .input-box input{
 .todo {
   display: block;
   position: relative;
-  padding: 1em 1em 1em 16%;
+  padding: 1em 1em 1em 8%;
   margin: 0 auto;
   margin-top: 10px;
   cursor: pointer; 
@@ -714,7 +762,7 @@ form .input-box input{
   top: 0;
   bottom: 0;
   left: 0;
-  width: 80%;
+  width: 50%;
   height: auto;
   margin: auto;
   
@@ -1093,8 +1141,11 @@ form .input-box input{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    margin: 0 29em;
-    font-size: 19px;
+    margin: 0 18em;
+    font-size: 24px;
+}
+.pagination a {
+    color: white;
 }
 
 /* COMMENT THREAD */
@@ -1271,10 +1322,49 @@ details.comment:not([open]) .comment-heading::after {
 
 @media (max-device-width: 475px) {
     .main {
-        max-width: 95%;
+        max-width: 100%;
     }
-    
-
+    .upper_content h2 {
+        width: 100%;
+        
+    }
+    .diary_detail p{
+        font-size: 14px !important;
+    }
+    .categories_list ul{
+        -webkit-column-count: 1; /* Chrome, Safari, Opera */
+        -moz-column-count: 1; /* Firefox */
+        column-count: 1;
+    }
+    .upper_content {
+        display: block;
+        overflow: auto;
+        font-size: 12px;
+        max-width: 100%;
+        padding-left: 0rem;
+        padding-right: 0rem;
+        /*border: 1px solid red;*/
+        padding: 2%;
+    }
+    .filter_buttons {
+        max-width: 100%;
+        margin-right: 45px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .tags {
+        max-width: 100%;
+        margin-right: 45px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .filter_buttons li {
+        padding: 1.5%;
+    }
+    .filter_buttons li a{
+        margin-top: 10px;
+        font-size: 10px !important;
+    }
     .th1{
         font-size: 24px;
         font-weight: 300;
@@ -1405,27 +1495,10 @@ details.comment:not([open]) .comment-heading::after {
       text-decoration: none;
     }
     .main_content {
-        width: 100%;
+        max-width: 100%;
         position: unset;
     }
-    .upper_content {
-        font-size: 12px;
-        width: 100%;
-        padding-left: 0rem;
-        padding-right: 0rem;
-        /*border: 1px solid red;*/
-        padding: 2%;
-    }
-    .upper_content {
-        display: block;
-        overflow: auto;
-        font-size: 12px;
-        max-width: 100%;
-        padding-left: 0rem;
-        padding-right: 0rem;
-        /*border: 1px solid red;*/
-        padding: 2%;
-    }
+    
     .posts {
         display: flex;
         max-width: 100%;
@@ -1484,6 +1557,14 @@ details.comment:not([open]) .comment-heading::after {
 @media (max-width: 640px) and (min-device-width: 475px) {
     .main{
         max-width: 100%;
+    }
+    .upper_content h2 {
+        width: 100%;
+    }
+    .categories_list ul{
+        -webkit-column-count: 1; /* Chrome, Safari, Opera */
+        -moz-column-count: 1; /* Firefox */
+        column-count: 1;
     }
     .search_bar{
         font-size: 10px;
@@ -1603,6 +1684,11 @@ details.comment:not([open]) .comment-heading::after {
 @media (max-width: 768px) and (min-device-width: 640px)  {
     .main{
         max-width: 100%;
+    }
+    .categories_list ul{
+        -webkit-column-count: 2; /* Chrome, Safari, Opera */
+        -moz-column-count: 2; /* Firefox */
+        column-count: 2;
     }
     .upper_content {
         display: block;
@@ -1748,7 +1834,7 @@ details.comment:not([open]) .comment-heading::after {
     }
     .pagination {
         font-size: 12px;
-        margin: 0 18em;
+        margin: 0 15em;
     }
 }
 @media (max-device-width: 1440px) and (min-device-width: 1024px) {
@@ -1790,7 +1876,7 @@ details.comment:not([open]) .comment-heading::after {
     }
     .pagination {
         font-size: 13px;
-        margin: 0 22em;
+        margin: 0 18em;
     }
 }
 

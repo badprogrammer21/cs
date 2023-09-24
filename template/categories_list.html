@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="categories_list">
+    {% for category in categories %}
+    <ul>
+        <li>{{category}}</li>
+    </ul>
+    {% endfor %}
+</div>
+
+{% endblock %}

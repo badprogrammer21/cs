@@ -95,6 +95,8 @@ def search_diary_post(request):
 
 def detail(request, slug):
     post = get_object_or_404(DiaryPost, slug=slug)
+    print(post.content)
+    print(post.slug)
     user = request.user
     content = post.content
     #content = content.replace('/**', '<h1 data-splitting>')
