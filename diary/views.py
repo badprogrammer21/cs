@@ -131,7 +131,7 @@ class DiaryPostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class PostCreateView(CreateView):
     model = DiaryPost
     template_name = 'diary/new_diary.html'
-    form_class = PostForm
+    fields = ['title', 'content', 'plans']
 
     def form_valid(self, form):
         candidate = form.save(commit=False)
