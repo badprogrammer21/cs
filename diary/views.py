@@ -147,7 +147,7 @@ class PostCreateView(CreateView):
                 print(messages.DEFAULT_TAGS)
                 messages.error(self.request, 'You can not create more than 1 diary a day')
                 return super(PostCreateView,self).form_invalid(form)
-            candidate.day_count += 1 + prev_day_count.get('day_count__max')
+            candidate.day_count += 1
         
         candidate.save()
         messages.success(self.request, 'The diary has been created')
