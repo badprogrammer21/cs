@@ -4,8 +4,11 @@
         <div class="profile_content">
           <div class="profile_upper_content">
               <div class="profile_avatar">
-                <img src="{{user.author.profile_pic.url}}" alt="Avatar">
-                
+                {% if user.author.profile_pic.url %}
+                        <img src="{{user.author.profile_pic.url}}" alt="Avatar">
+                {% else %}
+                      <img src="{% static 'images/avatar.jpg' %}" alt="Avatar">
+                {% endif %}
               </div>
               <div class="profile_info">
                   <h2>{{user.author}}</h2>
