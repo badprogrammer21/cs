@@ -77,10 +77,11 @@ def detail(request, slug):
     if "comment_content" in request.POST:
         comment = request.POST.get("comment_content")
         commment_auth = Comment.objects.filter(user=request.user.author)
-        last_comm = (timezone.now() - commment_auth.latest('date').date).seconds // 60 % 60
-        if last_comm < 5:
-            messages.error(request, 'You cannot comment more than 1 time in 5 minutes. So take this time to scrutinize the question')
-            return redirect(detail, slug)
+        if commment_auth:
+            last_comm = (timezone.now() - commment_auth.latest('date').date).seconds // 60 % 60
+            if last_comm < 5:
+                messages.error(request, 'You cannot comment more than 1 time in 5 minutes. So take this time to scrutinize the question')
+                return redirect(detail, slug)
         new_comment, created = Comment.objects.get_or_create(user=user.author, content=comment, sp_post=post)
 
         post.comments.add(new_comment.id)
