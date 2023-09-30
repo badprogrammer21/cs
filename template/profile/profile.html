@@ -4,7 +4,7 @@
         <div class="profile_content">
           <div class="profile_upper_content">
               <div class="profile_avatar">
-                {% if user.author.profile_pic.url %}
+                {% if user.author.profile_pic %}
                         <img src="{{user.author.profile_pic.url}}" alt="Avatar">
                 {% else %}
                       <img src="{% static 'images/avatar.jpg' %}" alt="Avatar">
